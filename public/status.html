@@ -1,0 +1,335 @@
+<!doctype html>
+<html ng-app="statusApp">
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.4/angular.min.js"></script>
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+		<link  href="style.css" rel="stylesheet" type="text/css"/>
+		<script src="status.js"></script>
+
+		<style>
+			body {
+				--table-width: 100%; /* Or any value, this will change dinamically */
+			}
+
+			tbody {
+				display:block;
+				max-height:300px;
+				overflow-y:auto;
+			}
+			
+			thead, tbody tr {
+			  	display:table;
+			  	width: var(--table-width);
+				table-layout:fixed;
+			}
+		</style>
+
+		<title>MR - Results</title>
+	</head>
+
+	<body>
+		<div ng-app="getServiceApp" ng-controller="getServiceCtrl">
+			
+			<p>
+				<h1 class="display-3 text-center">Results</h1>
+			</p>
+						
+			<form name="myForm">
+				<div class="container row mb-3" style="width: 80%; margin: auto;">
+					<div class="row row-cols-4">
+						<div class="input-group mb-3" style="width: 25%;">
+							<label class="input-group-text">User</label>
+							<select ng-model="account" class="form-select form-select-lg" required>
+								<option value="jenyffer">Jenyffer Barbara
+								<option value="haelton">Haelton de Jesus
+							</select>
+						</div>
+	
+						<div>
+							<button type="button" class="btn btn-primary btn-lg" ng-click="getdata()" ng-disabled="myForm.$invalid">
+								Search
+							</button>
+						</div>
+					</div>					
+				</div>
+			</form>
+
+			<div class="accordion" id="accordionResults" style="width: 80%; margin: auto;">
+
+				<div class="accordion-item" ng-show="bears_M5.length > 0">
+					<h2 class="accordion-header" id="headingBearsM5">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bearsM5" aria-expanded="false" aria-controls="bearsM5">
+							<span>BEAR - M5 WIN: {{bears_M5_win}} LOSS: {{bears_M5_loss}} PROFIT: {{bears_M5_profit}}</span>
+						</button>
+					</h2>
+					<div id="bearsM5" class="accordion-collapse collapse" aria-labelledby="headingBearsM5" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in bears_M5 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-item" ng-show="rafa_cr7_M5.length > 0">
+					<h2 class="accordion-header" id="headingRafaCR7M5">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rafaCR7M5" aria-expanded="false" aria-controls="rafaCR7M5">
+							<span>RAFA CR7 - M5 WIN: {{rafa_cr7_M5_win}} LOSS: {{rafa_cr7_M5_loss}} PROFIT: {{rafa_cr7_M5_profit}}</span>
+						</button>
+					</h2>
+					<div id="rafaCR7M5" class="accordion-collapse collapse" aria-labelledby="headingRafaCR7M5" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in rafa_cr7_M5 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-item" ng-show="rafa_cr7_M15.length > 0">
+					<h2 class="accordion-header" id="headingRafaCR7M15">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#rafaCR7M15" aria-expanded="false" aria-controls="rafaCR7M15">
+							<span>RAFA CR7 - M15 WIN: {{rafa_cr7_M15_win}} LOSS: {{rafa_cr7_M15_loss}} PROFIT: {{rafa_cr7_M15_profit}}</span>
+						</button>
+					</h2>
+					<div id="rafaCR7M15" class="accordion-collapse collapse" aria-labelledby="headingRafaCR7M15" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in rafa_cr7_M15 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-item" ng-show="sinais_consistentes_M1.length > 0">
+					<h2 class="accordion-header" id="headingSinaisConsistentesM1">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sinaisConsistentesM1" aria-expanded="false" aria-controls="sinaisConsistentesM1">
+							<span>SINAIS CONSISTENTES - M1 WIN: {{sinais_consistentes_M1_win}} LOSS: {{sinais_consistentes_M1_loss}} PROFIT: {{sinais_consistentes_M1_profit}}</span>
+						</button>
+					</h2>
+					<div id="sinaisConsistentesM1" class="accordion-collapse collapse" aria-labelledby="headingSinaisConsistentesM1" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in sinais_consistentes_M1 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				
+				<div class="accordion-item" ng-show="sinais_consistentes_M5.length > 0">
+					<h2 class="accordion-header" id="headingSinaisConsistentesM5">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sinaisConsistentesM5" aria-expanded="false" aria-controls="sinaisConsistentesM5">
+							<span>SINAIS CONSISTENTES - M5 WIN: {{sinais_consistentes_M5_win}} LOSS: {{sinais_consistentes_M5_loss}} PROFIT: {{sinais_consistentes_M5_profit}}</span>
+						</button>
+					</h2>
+					<div id="sinaisConsistentesM5" class="accordion-collapse collapse" aria-labelledby="headingSinaisConsistentesM5" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in sinais_consistentes_M5 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-item" ng-show="slum_signals_M1.length > 0">
+					<h2 class="accordion-header" id="headingSlumSignalsM1">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#slumSignalsM1" aria-expanded="false" aria-controls="slumSignalsM1">
+							<span>SLUM SIGNALS - M1 WIN: {{slum_signals_M1_win}} LOSS: {{slum_signals_M1_loss}} PROFIT: {{slum_signals_M1_profit}}</span>
+						</button>
+					</h2>
+					<div id="slumSignalsM1" class="accordion-collapse collapse" aria-labelledby="headingSlumSignalsM1" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in slum_signals_M1 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<div class="accordion-item" ng-show="slum_signals_M5.length > 0">
+					<h2 class="accordion-header" id="headingSlumSignalsM5">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#slumSignalsM5" aria-expanded="false" aria-controls="slumSignalsM5">
+							<span>SLUM SIGNALS - M5 WIN: {{slum_signals_M5_win}} LOSS: {{slum_signals_M5_loss}} PROFIT: {{slum_signals_M5_profit}}</span>
+						</button>
+					</h2>
+					<div id="slumSignalsM5" class="accordion-collapse collapse" aria-labelledby="headingSlumSignalsM5" data-bs-parent="#accordionResults">
+						<div class="accordion-body">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Time      </th>
+										<th>Par       </th>
+										<th>Action    </th>
+										<th>Expiration</th>
+										<th>Status    </th>
+										<th>1ª Entry  </th>
+										<th>2ª Entry  </th>
+										<th>Profit    </th>
+										<th style="width: 22px;"></th>
+									</tr>
+								</thead>
+								<tbody>					
+									<tr ng-repeat="doc in slum_signals_M5 | orderBy:['_id.time', '_id.par']">
+									<td>{{ doc._id.time   }}</td>
+									<td>{{ doc._id.par    }}</td>
+									<td>{{ doc.action     }}</td>
+									<td>{{ doc.expiration }}</td>
+									<td>{{ doc.status     }}</td>
+									<td>{{ doc.entry_1    }}</td>
+									<td>{{ doc.entry_2    }}</td>
+									<td>{{ doc.profit     }}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
