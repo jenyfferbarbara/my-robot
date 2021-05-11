@@ -18,7 +18,7 @@ angular.module('statusApp', [])
 
 	function get_results_bear(user, date) {
 		
-		url = "http://127.0.0.1:8080/api/bears?_id.user=" + user + "&_id.date=" + date
+		url = "http://vps31601.publiccloud.com.br:8080/api/bears?_id.user=" + user + "&_id.date=" + date
 		$http.get(url).then(function (response) {
 
 			// M5
@@ -42,7 +42,7 @@ angular.module('statusApp', [])
 
 	function get_results_rafa_cr7(user, date) {
 
-		url = "http://127.0.0.1:8080/api/rafa_cr7?_id.user=" + user + "&_id.date=" + date
+		url = "http://vps31601.publiccloud.com.br:8080/api/rafa_cr7?_id.user=" + user + "&_id.date=" + date
 		$http.get(url).then(function (response) {
 
 			// M5
@@ -83,7 +83,7 @@ angular.module('statusApp', [])
 
 	function get_results_sinais_consistentes(user, date) {
 
-		url = "http://127.0.0.1:8080/api/sinais_consistentes?_id.user=" + user + "&_id.date=" + date
+		url = "http://vps31601.publiccloud.com.br:8080/api/sinais_consistentes?_id.user=" + user + "&_id.date=" + date
 		$http.get(url).then(function (response) {
 
 			// M1
@@ -124,7 +124,7 @@ angular.module('statusApp', [])
 
 	function get_results_slum_signals(user, date) {
 
-		url = "http://127.0.0.1:8080/api/slum_signals?_id.user=" + user + "&_id.date=" + date
+		url = "http://vps31601.publiccloud.com.br:8080/api/slum_signals?_id.user=" + user + "&_id.date=" + date
 		$http.get(url).then(function (response) {
 
 			// M1
