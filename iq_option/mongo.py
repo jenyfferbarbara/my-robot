@@ -5,7 +5,7 @@ import sys
 
 log = configure_logs(__file__)
 
-client   = pymongo.MongoClient("mongodb://myRobot:6eJ%402chTyxn2%2as@localhost:27017/")
+client   = pymongo.MongoClient("mongodb://myRobot:6eJ%402chTyxn2%2as@127.0.0.1:27017/")
 database = client["my_robot"]
 
 def get_auth():

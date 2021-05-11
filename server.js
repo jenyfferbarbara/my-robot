@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const {spawn} = require('child_process');
 
 // mongoDB
-const mongoURL = 'mongodb://myRobot:6eJ%402chTyxn2%2as@localhost:27017/my_robot?authSource=admin';
+const mongoURL = 'mongodb://myRobot:6eJ%402chTyxn2%2as@127.0.0.1:27017/my_robot?authSource=admin';
 mongoose.connect(mongoURL, {useNewUrlParser: true, useUnifiedTopology: true});
 
 // Express

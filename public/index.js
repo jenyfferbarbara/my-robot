@@ -43,7 +43,7 @@ angular.module('angularApp', [])
 			}
 			
 			//Call the services  
-			$http.post('http://localhost:8080/api/' + this.channel, JSON.stringify(data)).then(function (response) {
+			$http.post('http://127.0.0.1:8080/api/' + this.channel, JSON.stringify(data)).then(function (response) {
 				if (response.data)
 					$scope.msg = "Post Data Submitted Successfully!";
 				}, function (response) {
@@ -55,7 +55,7 @@ angular.module('angularApp', [])
 		});
 
 		//Call the services  
-		$http.get('http://localhost:8080/run_robot?user=' + this.account + '&wallet=' + this.wallet 
+		$http.get('http://127.0.0.1:8080/run_robot?user=' + this.account + '&wallet=' + this.wallet 
 		+ '&stop_win=' + this.stop_win + '&stop_loss=' + this.stop_loss + '&expiration=' + this.expiration 
 		+ '&channel=' + this.channel).then(function (response) {});
 	};
