@@ -12,15 +12,21 @@
     "@popperjs/core": "^2.9.2",
     "angular": "^1.8.2",
     "angular-route": "^1.6.4",
+    "async": "^3.2.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^5.0.0-beta3",
+    "buffer-shims": "^1.0.0",
     "connect": "^3.7.0",
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
+    "hooks": "^0.3.2",
+    "hooks-fixed": "^2.0.2",
     "method-override": "^3.0.0",
+    "mongodb-core": "^3.2.7",
     "mongoose": "^5.12.4",
     "mongoose-morgan": "^1.0.17",
-    "node-restful": "^0.2.6"
+    "mpromise": "^0.5.5",
+    "node-restful": "^0.1.17"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2"

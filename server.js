@@ -52,5 +52,5 @@ app.get('/run_robot', (req, res) => {
 
 // Start server
 const port = 8080;
-app.listen(port);
+app.listen(port, "0.0.0.0");
 console.log(`Server is running on port: ${port}`);
