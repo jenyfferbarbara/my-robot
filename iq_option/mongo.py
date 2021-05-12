@@ -96,13 +96,13 @@ def check_stop():
 		
 		profit = 0
 		list_signals = get_signals("Done")
-		profit       = sum(line["profit"] for line in list_signals)
+		profit = sum(line["profit"] for line in list_signals)
 		
 		stop_win  = int(sys.argv[3])
 		stop_loss = int(sys.argv[4])
 
 		if profit >= stop_win or abs(profit) >= stop_loss or not pending:
-			log.info(f"STOP - wip: {wip}, pending: {pending}, profit: {profit}, stop_win:{stop_win}, stop_loss:{stop_loss}")
+			log.info(f"STOP - pending: {pending}, profit: {profit}, stop_win:{stop_win}, stop_loss:{stop_loss}")
 			return True
 		else:
 			return False
