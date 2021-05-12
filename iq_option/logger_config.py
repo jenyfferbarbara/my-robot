@@ -18,8 +18,7 @@ def configure_logs(full_file_path, output_level=logging.INFO):
 		logger.setLevel(output_level)
 		logger.propagate = False
 
-		formatter = logging.Formatter(
-			'%(asctime)s - %(message)s')
+		formatter = logging.Formatter('%(asctime)s - %(message)s')
 
 		ch = logging.StreamHandler()
 		ch.setLevel(output_level)
@@ -28,7 +27,7 @@ def configure_logs(full_file_path, output_level=logging.INFO):
 		date         = datetime.now().strftime('%Y-%m-%d')
 		expiration   = sys.argv[5]
 		channel      = sys.argv[6]
-		file_name    = "logs\\" + date + " " + channel + " " + expiration + ".log"
+		file_name    = "logs/" + date + " " + channel + " " + expiration + ".log"
 		file_handler = logging.FileHandler(file_name)
 		file_handler.setLevel(output_level)
 		file_handler.setFormatter(formatter)
