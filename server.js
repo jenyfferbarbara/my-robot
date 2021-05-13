@@ -50,6 +50,22 @@ app.get('/run_robot', (req, res) => {
 	});	
 })
 
+app.get('/teste', (req, res) => {
+
+	var dataToSend;
+	const python = spawn('python', ['--version']);
+
+	python.stdout.on('data', function (data) {
+		console.log('teste: ', data);
+		dataToSend = data.toString();
+	});
+
+	python.on('close', (code) => {
+		console.log('teste close: ', code);
+		res.send(dataToSend)
+	});	
+})
+
 // Start server
 const port = 8080;
 app.listen(port, "0.0.0.0");
