@@ -19,7 +19,7 @@ app.use('/api', require('./routes/api'));
 app.get('/install', (req, res) => {
 
 	var dataToSend;
-	const python = spawn('python', ['./api/setup.py', 'install']);
+	const python = spawn('python', ['./iq_option/teste.py', 'install']);
 
 	python.stdout.on('data', function (data) {
 		dataToSend = data.toString();
