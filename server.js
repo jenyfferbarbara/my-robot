@@ -38,14 +38,24 @@ app.get('/run_robot', (req, res) => {
 	const expiration = req.query.expiration
 	const channel    = req.query.channel
 
+	console.log("user: ", user);
+	console.log("wallet: ", wallet);
+	console.log("stop_win: ", stop_win);
+	console.log("stop_loss: ", stop_loss);
+	console.log("expiration: ", expiration);
+	console.log("channel: ", channel);
+
 	var dataToSend;
 	const python = spawn('python', ['./iq_option/main.py', user, wallet, stop_win, stop_loss, expiration, channel]);
 
 	python.stdout.on('data', function (data) {
+		console.log('data: ', data)
 		dataToSend = data.toString();
 	});
 
 	python.on('close', (code) => {
+		console.log('code: ', code)
+		console.log('dataToSend: ', dataToSend)
 		res.send(dataToSend)
 	});	
 })
