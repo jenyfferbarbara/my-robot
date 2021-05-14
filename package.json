@@ -26,7 +26,8 @@
     "mongoose": "^5.12.4",
     "mongoose-morgan": "^1.0.17",
     "mpromise": "^0.5.5",
-    "node-restful": "^0.1.17"
+    "node-restful": "^0.1.17",
+    "python-shell": "^3.0.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2"

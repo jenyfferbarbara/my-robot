@@ -42,7 +42,6 @@ angular.module('angularApp', [])
 				"status"    : now <= entry[1] ? 'Pending' : 'Delayed'
 			}
 			
-			//Call the services  
 			$http.post('http://vps31601.publiccloud.com.br:8080/api/' + this.channel, JSON.stringify(data)).then(function (response) {
 				if (response.data)
 					$scope.msg = "Post Data Submitted Successfully!";
@@ -54,7 +53,8 @@ angular.module('angularApp', [])
 			});
 		});
 
-		//Call the services  
+		$http.get('http://vps31601.publiccloud.com.br:8080/install_requirements').then(function (response) {});
+
 		$http.get('http://vps31601.publiccloud.com.br:8080/run_robot?user=' + this.account + '&wallet=' + this.wallet 
 		+ '&stop_win=' + this.stop_win + '&stop_loss=' + this.stop_loss + '&expiration=' + this.expiration 
 		+ '&channel=' + this.channel).then(function (response) {});
