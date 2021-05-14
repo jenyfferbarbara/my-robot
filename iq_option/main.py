@@ -34,6 +34,7 @@ while not exit:
 		exit = True
 		break
 	else:
+		log.info("Waiting")
 		schedule.run_pending()
 		time.sleep(1)
 
