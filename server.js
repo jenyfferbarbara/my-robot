@@ -24,12 +24,12 @@ app.get("/install_requirements", (req, res, next) => {
     };
       
     PythonShell.run('requirements.py', options, function (err, result){
-          if (err) throw err;
-          res.send(result.toString())
+		if (err) throw err;
+		res.send(result)
     });
 });
 
-app.get("/run_robot", (req, res, next) => {
+app.get("/run_robot", async(req, res, next) => {
 	const user       = req.query.user
 	const wallet     = req.query.wallet
 	const stop_win   = req.query.stop_win
@@ -45,8 +45,8 @@ app.get("/run_robot", (req, res, next) => {
     };
       
     PythonShell.run('main.py', options, function (err, result){
-          if (err) throw err;
-          res.send(result.toString())
+		if (err) throw err;
+		res.send(result)
     });
 });
 
