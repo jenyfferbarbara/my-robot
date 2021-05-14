@@ -1,7 +1,6 @@
 // Dependencies
 const express = require('express');
 const mongoose = require('mongoose');
-const {spawn} = require('child_process');
 const {PythonShell} = require('python-shell');
 
 // mongoDB
@@ -26,7 +25,6 @@ app.get("/install_requirements", (req, res, next) => {
       
     PythonShell.run('requirements.py', options, function (err, result){
           if (err) throw err;
-          console.log('result: ', result.toString());
           res.send(result.toString())
     });
 });
@@ -48,7 +46,6 @@ app.get("/run_robot", (req, res, next) => {
       
     PythonShell.run('main.py', options, function (err, result){
           if (err) throw err;
-          console.log('result: ', result.toString());
           res.send(result.toString())
     });
 });
