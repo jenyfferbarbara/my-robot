@@ -19,13 +19,13 @@ change_balance()
 list_signals = get_signals()
 
 def teste():
-	print('teste: ', datetime.now)
+	log.info('teste: ', datetime.now)
 
 log.info("List:")
 for line in list_signals:
 	line.pop("__v")
 	log.info(f"{line}")
-	print("schedule:", get_schedule_time(line["_id"]["time"]))
+	log.info("schedule:", get_schedule_time(line["_id"]["time"]))
 	schedule.every(1).day.at(get_schedule_time(line["_id"]["time"])).do(buy_new_thread, line)
 	schedule.every(1).minute.do(teste)
 
