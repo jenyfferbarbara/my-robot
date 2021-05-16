@@ -35,7 +35,7 @@ for line in list_signals:
 
 log.info(f"Waiting entries time - {sys.argv[6]}")
 
-while not exit:
+while True:
 	
 	if check_stop():
 		log.info("Stoping robot")
@@ -45,7 +45,4 @@ while not exit:
 	else:
 		log.info("NOT Stoping robot")
 		schedule.run_pending()
-
-	time.sleep(1)
-
-sys.exit()
+		time.sleep(1)
