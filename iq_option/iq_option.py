@@ -3,7 +3,7 @@ from logger_config import configure_logs
 from datetime import datetime
 from mongo import get_auth, update_status, update_results
 from login import connect
-from utils import *
+from utils import check_entry_time, get_entry_value, wait_entry, get_check_time
 import threading
 import time
 import sys
@@ -64,10 +64,14 @@ def best_payout(par, timeframe):
 
 def buy_new_thread(line):
 
+	log.info(f"buy_new_thread")	
+
 	job_thread = threading.Thread(target=buy, args=[line])
 	job_thread.start()
 
 def buy(line):
+
+	log.info(f"buy")
 	
 	time = line["_id"]["time"]
 	par  = line["_id"]["par"]
@@ -76,6 +80,8 @@ def buy(line):
 
 		option, payout = best_payout(par, 1)
 		
+		log.info(f"best_payout: {option} - {payout}")
+
 		if payout > 0:
 			update_status(line, "Processing")
 

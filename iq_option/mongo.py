@@ -102,7 +102,7 @@ def check_stop():
 		stop_loss = int(sys.argv[4])
 
 		if profit >= stop_win or abs(profit) >= stop_loss or not pending:
-			log.info(f"STOP - pending: {pending}, profit: {profit}, stop_win:{stop_win}, stop_loss:{stop_loss}")
+			log.info(f"STOP - pending: {pending}, profit: {profit}, stop_win: {stop_win}, stop_loss: {stop_loss}")
 			return True
 		else:
 			return False
