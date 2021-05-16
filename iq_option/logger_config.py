@@ -25,10 +25,9 @@ def configure_logs(full_file_path, output_level=logging.INFO):
 		ch.setFormatter(formatter)
 
 		date         = datetime.now().strftime('%Y-%m-%d')
-		#expiration   = sys.argv[5]
-		#channel      = sys.argv[6]
-		#file_name    = "logs/" + date + " " + channel + " " + expiration + ".log"
-		file_name    = "logs/teste.log"
+		expiration   = sys.argv[5]
+		channel      = sys.argv[6]
+		file_name    = f"logs/{date}_{channel}_{expiration}.log"
 		file_handler = logging.FileHandler(file_name)
 		file_handler.setLevel(output_level)
 		file_handler.setFormatter(formatter)
