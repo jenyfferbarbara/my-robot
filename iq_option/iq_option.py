@@ -54,6 +54,8 @@ def get_digital_payout(par):
 
 def best_payout(par, timeframe):
 
+	log.info(f"best_payout")
+
 	binaria_payout = get_binaria_payout(par, timeframe)
 	digital_payout = get_digital_payout(par)
 
@@ -64,10 +66,14 @@ def best_payout(par, timeframe):
 
 def buy_new_thread(line):
 
+	log.info(f"buy_new_thread")
+
 	job_thread = threading.Thread(target=buy, args=[line])
 	job_thread.start()
 
 def buy(line):
+
+	log.info(f"buy")
 
 	time = line["_id"]["time"]
 	par  = line["_id"]["par"]
@@ -76,6 +82,8 @@ def buy(line):
 
 		option, payout = best_payout(par, 1)
 		
+		log.info(f"option: {option} - payout: {payout}")
+
 		if payout > 0:
 			update_status(line, "Processing")
 
