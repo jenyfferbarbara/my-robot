@@ -16,6 +16,19 @@ app.use(express.json());
 // Routes
 app.use('/api', require('./routes/api'));
 
+app.get("/sched", (req, res, next) => {
+    let options = {
+        mode: 'text',
+        pythonOptions: ['-u'],
+        scriptPath: 'iq_option'
+    };
+      
+    PythonShell.run('teste_sched.py', options, function (err, result){
+		if (err) throw err;
+		res.send(result)
+    });
+});
+
 app.get("/install_requirements", (req, res, next) => {
     let options = {
         mode: 'text',

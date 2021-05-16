@@ -5,6 +5,13 @@ angular.module('statusApp', [])
 	// Initialize variables
 	this.account = null;
 
+	$scope.getTeste = function () {
+		
+		url = "http://vps31601.publiccloud.com.br:8080/sched"
+		$http.get(url).then(function (response) {});
+	};
+
+
 	$scope.getdata = function () {
 		var user = this.account;
 		var date = $filter('date')(new Date(), "yyyy-MM-dd");

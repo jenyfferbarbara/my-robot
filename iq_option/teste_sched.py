@@ -1,8 +1,11 @@
+from logger_config import configure_logs
 import schedule
 import time
 
+log = configure_logs(__file__)
+
 def teste():
-	print("TESTE")
+	log.info("TESTE")
 
 schedule.every(10).seconds.do(teste)
 
