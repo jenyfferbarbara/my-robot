@@ -43,7 +43,7 @@ app.get("/install_requirements", (req, res, next) => {
     });
 });
 
-app.get("/run_robot_old", async(req, res, next) => {
+app.get("/run_robot", async(req, res, next) => {
 	const user       = req.query.user
 	const wallet     = req.query.wallet
 	const stop_win   = req.query.stop_win
