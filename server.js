@@ -12,6 +12,7 @@ const app = express();
 app.use(express.static('public')); // Server static files
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.disable('etag');
 
 // Routes
 app.use('/api', require('./routes/api'));
