@@ -89,6 +89,8 @@ def check_signals_by_status(status):
 
 def check_stop():
 
+	log.info("check_stop")
+
 	if check_signals_by_status("Processing"):
 		return False
 	else:
@@ -105,6 +107,7 @@ def check_stop():
 			log.info(f"STOP - pending: {pending}, profit: {profit}, stop_win: {stop_win}, stop_loss: {stop_loss}")
 			return True
 		else:
+			log.info("return False")
 			return False
 
 def cancel_signals():

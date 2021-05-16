@@ -32,14 +32,14 @@ for line in list_signals:
 log.info(f"Waiting entries time - {sys.argv[6]}")
 
 while True:
+
+	log.info("NOT Stoping robot")
+	schedule.run_pending()
+	time.sleep(1)
 	
 	if check_stop():
 		log.info("Stoping robot")
 		cancel_signals()
 		break
-	
-	log.info("NOT Stoping robot")
-	schedule.run_pending()
-	time.sleep(1)
 
 sys.exit
