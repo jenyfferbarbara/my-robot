@@ -45,6 +45,7 @@ while not exit:
 	else:
 		log.info("NOT Stoping robot")
 		schedule.run_pending()
-		time.sleep(1)
+
+	time.sleep(1)
 
 sys.exit()
