@@ -1,12 +1,10 @@
 from logger_config import configure_logs
-from iq_option import login, change_balance
-from datetime import datetime
+from iq_option import login, change_balance, buy_new_thread
 from utils import get_schedule_time
 from mongo import get_signals, check_stop, cancel_signals
 import sys
 import time
 import schedule
-import threading
 
 log = configure_logs(__file__)
 
@@ -15,13 +13,6 @@ log.info("Starting robot")
 login()
 change_balance()
 list_signals = get_signals()
-
-def teste():
-	log.info("TESTE")
-
-def buy_new_thread(line):
-	job_thread = threading.Thread(target=teste)
-	job_thread.start()
 
 log.info("List:")
 for line in list_signals:
