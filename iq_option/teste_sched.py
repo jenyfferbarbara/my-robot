@@ -14,10 +14,10 @@ def buy_new_thread():
 	job_thread = threading.Thread(target=teste)
 	job_thread.start()
 
-schedule.every().day.at("00:38:15").do(buy_new_thread)
-schedule.every().day.at("00:38:30").do(teste)
-schedule.every().day.at("00:38:45").do(buy_new_thread)
-schedule.every().day.at("00:38:59").do(teste)
+schedule.every().day.at("00:42:15").do(buy_new_thread)
+schedule.every().day.at("00:42:30").do(teste)
+schedule.every().day.at("00:42:45").do(buy_new_thread)
+schedule.every().day.at("00:42:59").do(teste)
 
 while True:
 	schedule.run_pending()
