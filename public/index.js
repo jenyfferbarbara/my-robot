@@ -53,10 +53,16 @@ angular.module('angularApp', [])
 			});
 		});
 
-		$http.get('http://vps31601.publiccloud.com.br:8080/install_requirements').then(function (response) {});
-
 		$http.get('http://vps31601.publiccloud.com.br:8080/run_robot?user=' + this.account + '&wallet=' + this.wallet 
 		+ '&stop_win=' + this.stop_win + '&stop_loss=' + this.stop_loss + '&expiration=' + this.expiration 
-		+ '&channel=' + this.channel).then(function (response) {});
+		+ '&channel=' + this.channel).then(function (response) {
+			if (response.data)
+					$scope.msg = "Run robot Successfully!";
+				}, function (response) {
+					$scope.msg = "Service not Exists";
+					$scope.statusval = response.status;
+					$scope.statustext = response.statusText;
+					$scope.headers = response.headers();
+		});
 	};
 })
