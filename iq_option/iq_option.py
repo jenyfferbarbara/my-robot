@@ -29,6 +29,8 @@ def change_balance():
 
 def get_binaria_payout(par, timeframe):
 
+	log.info(f"get_binaria_payout")
+
 	open_candles = API.get_binary_option_detail()
 	binaria_payout = API.get_all_profit()	
 
@@ -39,15 +41,25 @@ def get_binaria_payout(par, timeframe):
 	else:
 		binary_details = open_candles[par]["binary"]
 		open = binary_details["enabled"] if binary_details else False
+
+		log.info(f"binary_details: {binary_details}")
+		log.info(f"open: {open}")
+
 		return int(100 * binaria_payout[par]["binary"]) if open else 0
 
 def get_digital_payout(par):
 
+	log.info(f"get_digital_payout")
+
 	digital_details = API.get_digital_underlying_list_data()["underlying"] # pylint: disable=E1136
 	par_details = next((x for x in digital_details if x["underlying"] == par), None)
 
+	log.info(f"digital_details: {digital_details}")
+	log.info(f"par_details: {par_details}")
+
 	if(par_details):
 		open = next((True for x in par_details["schedule"] if x["open"] < time.time() < x["close"]), False)
+		log.info(f"open: {open}")
 		return API.get_digital_payout(par) if open else 0
 	else:
 		return 0
