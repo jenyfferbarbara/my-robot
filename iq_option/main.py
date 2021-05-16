@@ -37,12 +37,6 @@ log.info(f"Waiting entries time - {sys.argv[6]}")
 
 while True:
 	
-	if check_stop():
-		log.info("Stoping robot")
-		cancel_signals()
-		exit = True
-		break
-	else:
-		log.info("NOT Stoping robot")
-		schedule.run_pending()
-		time.sleep(1)
+	log.info("NOT Stoping robot")
+	schedule.run_pending()
+	time.sleep(1)
