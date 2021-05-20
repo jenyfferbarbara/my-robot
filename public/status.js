@@ -71,7 +71,7 @@ angular.module('statusApp', [])
 
 			// M15
 			var list_M15 = response.data.filter(function(val) {
-				return val["expiration"] == 5; }, 0)
+				return val["expiration"] == 15; }, 0)
 
 			$scope.rafa_cr7_M15_profit = list_M15.reduce(function(acc, val) { 
 				return acc + val["profit"]; }, 0).toFixed(2)
