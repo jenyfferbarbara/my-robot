@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const {PythonShell} = require('python-shell');
 
 // mongoDB
-const mongoURL = 'mongodb://myRobot:6eJ%402chTyxn2%2as@vps31601.publiccloud.com.br:27017/my_robot?authSource=admin';
+const mongoURL = 'mongodb://myRobot:6eJ%402chTyxn2%2as@vps31866.publiccloud.com.br:27017/my_robot?authSource=admin';
 mongoose.connect(mongoURL, {useNewUrlParser: true, useUnifiedTopology: true});
 
 // Express
