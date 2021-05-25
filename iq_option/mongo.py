@@ -1,11 +1,16 @@
 from logger_config import configure_logs
 from datetime import datetime
 import pymongo
+import json
 import sys
+import os
 
 log = configure_logs(__file__)
 
-client   = pymongo.MongoClient("mongodb://myRobot:6eJ%402chTyxn2%2as@vps31866.publiccloud.com.br:27017/")
+with open(os.getcwd() + '\config.json') as config_file:
+	data = json.load(config_file)
+
+client   = pymongo.MongoClient(f"mongodb://myRobot:6eJ%402chTyxn2%2as@{data['host']}:27017/")
 database = client["my_robot"]
 
 def get_auth():

@@ -1,10 +1,12 @@
+var config = require('./config.json');
+
 // Dependencies
 const express = require('express');
 const mongoose = require('mongoose');
 const {PythonShell} = require('python-shell');
 
 // mongoDB
-const mongoURL = 'mongodb://myRobot:6eJ%402chTyxn2%2as@vps31866.publiccloud.com.br:27017/my_robot?authSource=admin';
+const mongoURL = `mongodb://myRobot:6eJ%402chTyxn2%2as@${config.host}:27017/my_robot?authSource=admin`;
 mongoose.connect(mongoURL, {useNewUrlParser: true, useUnifiedTopology: true});
 
 // Express
@@ -16,19 +18,6 @@ app.disable('etag');
 
 // Routes
 app.use('/api', require('./routes/api'));
-
-app.get("/sched", (req, res, next) => {
-    let options = {
-        mode: 'text',
-        pythonOptions: ['-u'],
-        scriptPath: 'iq_option'
-    };
-      
-    PythonShell.run('teste_sched.py', options, function (err, result){
-		if (err) throw err;
-		res.send(result)
-    });
-});
 
 app.get("/install_requirements", (req, res, next) => {
     let options = {

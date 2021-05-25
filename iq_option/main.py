@@ -25,11 +25,12 @@ log.info(f"Waiting entries time - {sys.argv[6]}")
 while True:
 
 	schedule.run_pending()
-	time.sleep(1)
-	
+		
 	if check_stop():
 		log.info("Stoping robot")
 		cancel_signals()
 		break
+
+	time.sleep(1)
 
 sys.exit

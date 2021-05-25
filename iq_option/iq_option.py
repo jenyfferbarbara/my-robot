@@ -48,7 +48,6 @@ def get_digital_payout(par):
 
 	if(par_details):
 		open = next((True for x in par_details["schedule"] if x["open"] < time.time() < x["close"]), False)
-		log.info(f"open: {open}")
 		return API.get_digital_payout(par) if open else 0
 	else:
 		return 0
@@ -110,10 +109,10 @@ def buy_digital(line, payout, recovery_value = None, gale = False):
 
 		while True:
 			status,result = API.check_win_digital_v2(id)
-			
 			if status:
 				calculate_result(line, result, gale, entry_value, recovery_value)
 				break
+			time.sleep(1)
 	else :
 		update_status(line, "Fail Dig")
 		buy_binaria(line, payout)
@@ -151,9 +150,12 @@ def buy_gale(line, payout, entry_value, id, option, gale):
 	action    = line["action"]
 	timeframe = int(line["expiration"])
 
-	if not gale and check_gale(id, par, timeframe, action):
-		job_thread = threading.Thread(target=option, args=[line, payout, entry_value, True])
-		job_thread.start()
+	if not gale:
+		if check_gale(id, par, timeframe, action):
+			job_thread = threading.Thread(target=option, args=[line, payout, entry_value, True])
+			job_thread.start()
+		else:
+			update_status(line, "Done")
 
 def check_gale(id, par, timeframe, action):
 
