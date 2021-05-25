@@ -7,7 +7,7 @@ import os
 
 log = configure_logs(__file__)
 
-with open(os.getcwd() + '\config.json') as config_file:
+with open(os.getcwd() + '/config.json') as config_file:
 	data = json.load(config_file)
 
 client   = pymongo.MongoClient(f"mongodb://myRobot:6eJ%402chTyxn2%2as@{data['host']}:27017/")
