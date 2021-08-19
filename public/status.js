@@ -18,25 +18,25 @@ angular.module('statusApp', [])
 
 	function get_results_bear(user, date) {
 		
-		url = '/api/bears?_id.user=' + user + '&_id.date=' + date
+		url = '/api/fox?_id.user=' + user + '&_id.date=' + date
 		$http.get(url).then(function (response) {
 
 			// M5
 			var list_M5 = response.data.filter(function(val) {
 				return val["expiration"] == 5; }, 0)
 
-			$scope.bears_M5_profit = list_M5.reduce(function(acc, val) { 
+			$scope.fox_M5_profit = list_M5.reduce(function(acc, val) { 
 				return acc + val["profit"]; }, 0).toFixed(2)
 			
-			$scope.bears_M5_win = list_M5.reduce(function(acc, val) {
+			$scope.fox_M5_win = list_M5.reduce(function(acc, val) {
 				var value = val["result"] == "WIN" ? 1 : 0;
 				return acc + value; }, 0)
 
-			$scope.bears_M5_loss = list_M5.reduce(function(acc, val) {
+			$scope.fox_M5_loss = list_M5.reduce(function(acc, val) {
 				var value = val["result"] == "LOSS" ? 1 : 0;
 				return acc + value; }, 0)
 
-			$scope.bears_M5 =  list_M5
+			$scope.fox_M5 =  list_M5
 		});
 	}
 

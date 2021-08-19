@@ -3,15 +3,15 @@ var express = require('express');
 var router  = express.Router();
 
 // Models
-var Bears               = require('../models/bears');
+var Fox                 = require('../models/fox');
 var Rafa_CR7            = require('../models/rafa_cr7');
 var Sinais_Consistentes = require('../models/sinais_consistentes');
 var SlumSignals         = require('../models/slum_signals');
 var Testes              = require('../models/testes');
 
 // Routes
-Bears.methods(['get', 'put', 'post', 'delete']);
-Bears.register(router, '/bears');
+Fox.methods(['get', 'put', 'post', 'delete']);
+Fox.register(router, '/fox');
 
 Rafa_CR7.methods(['get', 'put', 'post', 'delete']);
 Rafa_CR7.register(router, '/rafa_cr7');

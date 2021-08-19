@@ -59,13 +59,13 @@
 
 			<div class="accordion" id="accordionResults" style="width: 80%; margin: auto;">
 
-				<div class="accordion-item" ng-show="bears_M5.length > 0">
-					<h2 class="accordion-header" id="headingBearsM5">
-						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#bearsM5" aria-expanded="false" aria-controls="bearsM5">
-							<span>BEAR - M5 WIN: {{bears_M5_win}} LOSS: {{bears_M5_loss}} PROFIT: {{bears_M5_profit}}</span>
+				<div class="accordion-item" ng-show="fox_M5.length > 0">
+					<h2 class="accordion-header" id="headingFoxM5">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#foxM5" aria-expanded="false" aria-controls="foxM5">
+							<span>BEAR - M5 WIN: {{fox_M5_win}} LOSS: {{fox_M5_loss}} PROFIT: {{fox_M5_profit}}</span>
 						</button>
 					</h2>
-					<div id="bearsM5" class="accordion-collapse collapse" aria-labelledby="headingBearsM5" data-bs-parent="#accordionResults">
+					<div id="foxM5" class="accordion-collapse collapse" aria-labelledby="headingFoxM5" data-bs-parent="#accordionResults">
 						<div class="accordion-body">
 							<table class="table table-hover">
 								<thead>
@@ -82,7 +82,7 @@
 									</tr>
 								</thead>
 								<tbody>					
-									<tr ng-repeat="doc in bears_M5 | orderBy:['_id.time', '_id.par']">
+									<tr ng-repeat="doc in fox_M5 | orderBy:['_id.time', '_id.par']">
 									<td>{{ doc._id.time   }}</td>
 									<td>{{ doc._id.par    }}</td>
 									<td>{{ doc.action     }}</td>
