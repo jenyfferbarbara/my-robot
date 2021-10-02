@@ -3,6 +3,7 @@ var express = require('express');
 var router  = express.Router();
 
 // Models
+var Users               = require('../models/settings');
 var Fox                 = require('../models/fox');
 var Rafa_CR7            = require('../models/rafa_cr7');
 var Sinais_Consistentes = require('../models/sinais_consistentes');
@@ -10,6 +11,9 @@ var SlumSignals         = require('../models/slum_signals');
 var Testes              = require('../models/testes');
 
 // Routes
+Users.methods(['get', 'put', 'post', 'delete']);
+Users.register(router, '/settings');
+
 Fox.methods(['get', 'put', 'post', 'delete']);
 Fox.register(router, '/fox');
 
