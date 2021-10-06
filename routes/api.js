@@ -3,31 +3,23 @@ var express = require('express');
 var router  = express.Router();
 
 // Models
-var Users               = require('../models/settings');
-var Fox                 = require('../models/fox');
-var Rafa_CR7            = require('../models/rafa_cr7');
-var Sinais_Consistentes = require('../models/sinais_consistentes');
-var SlumSignals         = require('../models/slum_signals');
-var Testes              = require('../models/testes');
+var Users     = require('../models/settings');
+var Channels  = require('../models/channel');
+var Signals   = require('../models/signal');
+var Summaries = require('../models/summary');
 
 // Routes
 Users.methods(['get', 'put', 'post', 'delete']);
 Users.register(router, '/settings');
 
-Fox.methods(['get', 'put', 'post', 'delete']);
-Fox.register(router, '/fox');
+Channels.methods(['get', 'put', 'post', 'delete']);
+Channels.register(router, '/channels');
 
-Rafa_CR7.methods(['get', 'put', 'post', 'delete']);
-Rafa_CR7.register(router, '/rafa_cr7');
+Signals.methods(['get', 'put', 'post', 'delete']);
+Signals.register(router, '/signals');
 
-Sinais_Consistentes.methods(['get', 'put', 'post', 'delete']);
-Sinais_Consistentes.register(router, '/sinais_consistentes');
-
-SlumSignals.methods(['get', 'put', 'post', 'delete']);
-SlumSignals.register(router, '/slum_signals');
-
-Testes.methods(['get', 'put', 'post', 'delete']);
-Testes.register(router, '/testes');
+Summaries.methods(['get', 'put', 'post', 'delete']);
+Summaries.register(router, '/summaries');
 
 // Return router
 module.exports = router;

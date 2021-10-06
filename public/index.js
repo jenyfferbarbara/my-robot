@@ -1,58 +1,104 @@
 angular.module('angularApp', [])
 
-.controller('postserviceCtrl', function ($scope, $filter, $http) {
+.controller('indexController', function ($scope, $filter, $http) {
   
 	// Initialize variables
-	this.account    = null;
-	this.wallet     = null;
-	this.expiration = null;
-	this.stop_win   = null;
-	this.stop_loss  = null;
-	this.channel    = null;
-	this.list       = null;
+	$scope.timeframes = [
+		{ name: '01', id: '1' },
+		{ name: '05', id: '5' },
+		{ name: '15', id: '15'}];
 
-	$scope.reset = function () {
-		this.account    = null;
-		this.wallet     = null;
-		this.expiration = null;
-		this.stop_win   = null;
-		this.stop_loss  = null;
-		this.channel    = null;
-		this.list       = null;
+	get_users_settings();
+	get_channels();
+
+	$scope.selectedUsers = function() {
+		$scope.application.users = $filter('filter')($scope.users, {
+			checked: true
+		});		
 	}
 
-	$scope.postdata = function () {
-		var date = $filter('date')(new Date(), "yyyy-MM-dd");
-		var now = $filter('date')(new Date(), "HH:mm");
-		var entries = this.list.split("\n")
+	$scope.reset = function () {
+		get_users_settings();
+	}
+	
+	$scope.printData = function() {
+		var today = $filter('date')(new Date(), "yyyy-MM-dd");
+		var now   = $filter('date')(new Date(), "HH:mm");
 
-		entries.forEach(entry => {
-			entry = entry.split(";")
+		$scope.channels.forEach(channel => {
+			if($scope.application.users && channel.list){
+				$scope.application.users.forEach(user => {
+					var date = $filter('date')(channel.date, "yyyy-MM-dd");
+					var entries = channel.list.split("\n");
+					entries.forEach(entry => {
+						entry = entry.split(";")
+						var data = {
+							"user"		: user.name,
+							"date"		: date,
+							"channel"	: channel.name,
+							"expiration": channel.timeframe,
+							"signal": {
+								"par" 		: entry[0],
+								"time"		: entry[1],
+								"action"    : entry[2].trim(),
+								"status"    : today < date || (today == date && now < entry[1]) ? 'Pending' : 'Delayed'
+							}			
+						}
+						$http.post('/api/signals' , JSON.stringify(data)).then(function (response) {
+							if (response.data)
+								$scope.msg = "Post Signals Data Submitted Successfully!";
+							}, function (response) {
+								$scope.msg = "Service not Exists";
+								$scope.statusval = response.status;
+								$scope.statustext = response.statusText;
+								$scope.headers = response.headers();
+						});
+					});
 
-			var data = {
-				"_id": {
-					"user": this.account,
-					"par" : entry[0],
-					"date": date,
-					"time": entry[1]
-				},
-				"action"    : entry[2].trim(),
-				"expiration": this.expiration,
-				"profit"    : 0,
-				"status"    : now <= entry[1] ? 'Pending' : 'Delayed'
+					var data = {
+						"user"		: user.name,
+						"date"		: date,
+						"channel"	: channel.name,
+						"expiration": channel.timeframe,
+						"stop_win"  : channel.stop_win * user.value,
+						"stop_loss" : channel.stop_loss * user.value,
+						"profit"	: 0
+					}
+					$http.post('/api/summaries', JSON.stringify(data)).then(function (response) {
+						if (response.data)
+							$scope.msg = "Post Summaries Data Submitted Successfully!";
+						}, function (response) {
+							$scope.msg = "Service not Exists";
+							$scope.statusval = response.status;
+							$scope.statustext = response.statusText;
+							$scope.headers = response.headers();
+					});
+				});				
 			}
-			
-			$http.post('/api/' + this.channel, JSON.stringify(data)).then(function (response) {
-				if (response.data)
-					$scope.msg = "Post Data Submitted Successfully!";
-				}, function (response) {
-					$scope.msg = "Service not Exists";
-					$scope.statusval = response.status;
-					$scope.statustext = response.statusText;
-					$scope.headers = response.headers();
+		});
+	}
+
+	function get_users_settings() {
+		url = '/api/settings'
+		$http.get(url).then(function (response) {
+			$scope.users = response.data;
+		});
+	}
+
+	function get_channels() {		
+		url = '/api/channels'
+		$http.get(url).then(function (response) {
+			$scope.channels = $filter('filter')(response.data, {
+				active: true
 			});
 		});
+	}
+	
+	$scope.application = {
+		users: []
+	  }
 
+	$scope.postdata = function () {
 		$http.get('/run_robot?user=' + this.account + '&wallet=' + this.wallet 
 		+ '&stop_win=' + this.stop_win + '&stop_loss=' + this.stop_loss + '&expiration=' + this.expiration 
 		+ '&channel=' + this.channel).then(function (response) {
