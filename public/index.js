@@ -21,7 +21,7 @@ angular.module('angularApp', [])
 		get_users_settings();
 	}
 	
-	$scope.printData = function() {
+	$scope.postdata = function() {
 		var today = $filter('date')(new Date(), "yyyy-MM-dd");
 		var now   = $filter('date')(new Date(), "HH:mm");
 
@@ -62,8 +62,12 @@ angular.module('angularApp', [])
 						"expiration": channel.timeframe,
 						"stop_win"  : channel.stop_win * user.value,
 						"stop_loss" : channel.stop_loss * user.value,
-						"profit"	: 0
+						"profit"	: 0,
+						"recovery"	: 0,
+						"win"		: 0,
+						"loss"		: 0
 					}
+
 					$http.post('/api/summaries', JSON.stringify(data)).then(function (response) {
 						if (response.data)
 							$scope.msg = "Post Summaries Data Submitted Successfully!";
@@ -98,7 +102,7 @@ angular.module('angularApp', [])
 		users: []
 	  }
 
-	$scope.postdata = function () {
+	$scope.postdata_old = function () {
 		$http.get('/run_robot?user=' + this.account + '&wallet=' + this.wallet 
 		+ '&stop_win=' + this.stop_win + '&stop_loss=' + this.stop_loss + '&expiration=' + this.expiration 
 		+ '&channel=' + this.channel).then(function (response) {

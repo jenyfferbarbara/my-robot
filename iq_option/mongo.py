@@ -24,62 +24,106 @@ def get_auth():
 
 def get_signals(status = "Pending"):
 
-	date       = datetime.now().strftime('%Y-%m-%d')
 	user       = sys.argv[1]
-	expiration = sys.argv[5]
-	channel    = sys.argv[6]
-
-	collection = database[channel]
-	criteria   = { "_id.user"   : user, 
-				   "_id.date"   : date, 
-				   "expiration" : int(expiration), 
-				   "status"     : status }
+	collection = database["signals"]
+	criteria   = { "user"   	   : user, 
+				   "signal.status" : status }
 
 	return collection.find(criteria)
 
-def update_results(doc, result, gale):
+def update_results(doc, result, recovery_value, gale):	
 
-	doc_updated = get_doc(doc)
-	if doc_updated["profit"]:
-		profit = round(result + doc_updated["profit"], 2)
-	else:
-		profit = result
+	summary = get_summaries(doc)
+	result  = round(result, 2)
+	profit  = round(result + summary["profit"], 2)
 
-	field = "entry_1" if not gale else "entry_2"
+	if result > 0:
+		new_values_sig = { "$set": { "result.status": 'Win', 
+									 "result.gain"  : result,
+									 "signal.status": 'Done'} }
 
-	if profit > 0:
-		new_values = { "$set": { field: f"WIN: {result}", "profit": profit, "result": "WIN", "status": "Done" }}
+		new_values_sum = { "$set": { "profit": profit, 
+									 "recovery": 0,
+									 "win"   : summary["win"] + 1} }
+
+		log.info(f"WIN: {result}")
 	else:
 		if gale:
-			new_values = { "$set": { field: f"LOSS: {result}", "profit": profit, "result": "LOSS", "status": "Done" }}
-		else:
-			new_values = { "$set": { field: f"LOSS: {result}", "profit": profit }}
+			new_values_sig = { "$set": { "result.status": 'Loss', 
+										 "result.gale"  : result,
+										 "signal.status": 'Done'} }
+
+			new_values_sum = { "$set": { "profit" : profit, 
+									 	 "loss"   : summary["loss"] + 1,
+									 	 "recovery": round(result - recovery_value + summary["recovery"], 2)} }
+
+			log.info(f"LOSS: {result}")
+		else:			
+			new_values_sig = { "$set": { "result.status": 'Loss', 
+										 "result.gain"  : result} }
+
+			new_values_sum = { "$set": { "profit": profit } }
+
+			log.info(f"GALE: {result}")
 			
-	update_doc(doc, new_values)
+	update_signals(doc, new_values_sig)
+	update_summaries(summary, new_values_sum)
 
 def update_status(doc, new_status):
 
-	new_values = { "$set": { "status": new_status } }
-	
-	update_doc(doc, new_values)
+	new_values = { "$set": { "signal.status": new_status } }
+	update_signals(doc, new_values)
 
-def get_doc(doc):
+def get_signal(doc):
 
-	channel    = sys.argv[6]
-	collection = database[channel]
+	user   	   = sys.argv[1]
+	collection = database["signals"]		
+	query	   = { 	"user"	 	    : user,
+					"date"		    : doc["date"],
+					"channel"	    : doc["channel"],
+					"expiration"	: doc["expiration"],
+					"signal.par"    : doc["par"],
+					"signal.time"   : doc["time"],
+					"signal.action" : doc["action"]}
 
-	query = {"_id": doc["_id"]}
 	result = collection.find(query)
-
 	return result[0]
 
-def update_doc(doc, new_values):
+def update_signals(doc, new_values):
+	
+	collection = database["signals"]
+	result 	   = get_signal(doc)
+	criteria   = {"_id": result["_id"]}	
+	collection.update_one(criteria, new_values)
 
-	channel    = sys.argv[6]
-	collection = database[channel]
+def get_summaries(doc):
 
-	query = {"_id": doc["_id"]}
-	collection.update_one(query, new_values)
+	user   	   = sys.argv[1]
+	collection = database["summaries"]
+
+	query  = { "user"	 	    : user,
+				"date"		    : doc["date"],
+				"channel"	    : doc["channel"],
+				"expiration"	: doc["expiration"]}
+	result = collection.find(query)
+	
+	return result[0]
+
+def update_summaries(doc, new_values):
+
+	collection = database["summaries"]
+
+	criteria   = {"_id": doc["_id"]}
+	collection.update_one(criteria, new_values)
+
+def count_by_status(status = "Processing"):
+
+	user       = sys.argv[1]
+	collection = database["signals"]
+	criteria   = { "user"   	   : user, 
+				   "signal.status" : status }
+
+	return collection.count_documents(criteria)
 
 def check_signals_by_status(status):
 	
@@ -100,7 +144,7 @@ def check_stop():
 		pending = check_signals_by_status("Pending")
 		
 		profit = 0
-		list_signals = get_signals("Done")
+		list_signals = get_signals("TESTE")
 		profit = sum(line["profit"] for line in list_signals)
 		
 		stop_win  = int(sys.argv[3])

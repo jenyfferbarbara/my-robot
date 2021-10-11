@@ -1,7 +1,8 @@
+from datetime import datetime, timedelta
 from logger_config import configure_logs
 from iq_option import login, change_balance, buy_new_thread
 from utils import get_schedule_time
-from mongo import get_signals, check_stop, cancel_signals
+from mongo import get_signals, check_stop, cancel_signals, update_status, count_by_status
 import sys
 import time
 import schedule
@@ -14,22 +15,36 @@ login()
 change_balance()
 list_signals = get_signals()
 
-log.info("List:")
+keyMap = dict()
 for line in list_signals:
-	line.pop("__v")
-	log.info(f"{line}")
-	schedule.every().day.at(get_schedule_time(line["_id"]["time"])).do(buy_new_thread, line)
 
-log.info(f"Waiting entries time - {sys.argv[6]}")
+	sig = dict()
+	sig["channel"]    = line["channel"]
+	sig["par"]        = line["signal"]["par"]
+	sig["date"]       = line["date"]
+	sig["time"]       = line["signal"]["time"]
+	sig["action"]     = line["signal"]["action"]
+	sig["expiration"] = line["expiration"]
+	
+	key = line["signal"]["time"] + ':00'
+	keyMap[key] = sig
 
-while True:
+log.info(f"Waiting entries time")
 
-	schedule.run_pending()
-		
-	if check_stop():
-		log.info("Stoping robot")
-		cancel_signals()
-		break
+while len(keyMap) > 0:
+
+	entry_time = datetime.now() + timedelta(seconds=15)
+	entry_time = entry_time.strftime('%H:%M:%S')
+	
+	if entry_time in keyMap:
+		entry = keyMap[entry_time]
+		log.info(entry)
+		if count_by_status() > 0:
+			update_status(entry, "Canceled")
+			log.info("Canceled because there is already another transaction in progress")
+		else:
+			buy_new_thread(entry)
+		keyMap.pop(entry_time, None)
 
 	time.sleep(1)
 

@@ -1,7 +1,7 @@
 from iqoptionapi.stable_api import IQ_Option
 from logger_config import configure_logs
 from datetime import datetime
-from mongo import get_auth, update_status, update_results
+from mongo import get_auth, update_status, update_results, get_signal, get_summaries
 from login import connect
 from utils import check_entry_time, get_entry_value, wait_entry, get_check_time
 import threading
@@ -13,7 +13,7 @@ log = configure_logs(__file__)
 auth       = get_auth()
 email      = auth["email"]
 password   = auth["password"]
-lost_value = 0
+value	   = auth["value"]
 
 API = IQ_Option(email, password)
 
@@ -21,9 +21,9 @@ def login():
 	
 	connect(API)
 
-def change_balance(): 
+def change_balance():
 
-	wallet = sys.argv[2]
+	wallet = auth["wallet"]
 	API.change_balance(wallet) 
 	log.info(f"Wallet: {wallet}")
 
@@ -69,8 +69,8 @@ def buy_new_thread(line):
 
 def buy(line):
 
-	time = line["_id"]["time"]
-	par  = line["_id"]["par"]
+	time = line["time"]
+	par  = line["par"]
 
 	if check_entry_time(time):
 
@@ -88,29 +88,24 @@ def buy(line):
 
 def buy_digital(line, payout, recovery_value = None, gale = False):
 
-	global lost_value
-	entry_time = line["_id"]["time"]
-	par        = line["_id"]["par"]
+	entry_time = line["time"]
+	par        = line["par"]
 	action     = line["action"]
 	timeframe  = int(line["expiration"])
 
-	if recovery_value == None:
-		recovery_value = abs(lost_value)
-		
-	entry_value = get_entry_value(recovery_value, payout)
+	summary = get_summaries(line)
+	entry_value = get_entry_value(line, payout, value, recovery_value if gale else abs(summary["recovery"]))
 	
 	wait_entry(entry_time)
-
 	buys_status, id = API.buy_digital_spot_v2(par, entry_value, action, timeframe)
 		
-	if(buys_status):
-		
+	if(buys_status):		
 		buy_gale(line, payout, entry_value, id, buy_digital, gale)
-
 		while True:
 			status,result = API.check_win_digital_v2(id)
 			if status:
-				calculate_result(line, result, gale, entry_value, recovery_value)
+				update_results(line, result, recovery_value, gale)
+				retry_gale(line, payout, entry_value, buy_digital)
 				break
 			time.sleep(1)
 	else :
@@ -119,34 +114,29 @@ def buy_digital(line, payout, recovery_value = None, gale = False):
 
 def buy_binaria(line, payout, recovery_value = None, gale = False):
 
-	global lost_value
-	entry_time = line["_id"]["time"]
-	par        = line["_id"]["par"]
+	entry_time = line["time"]
+	par        = line["par"]
 	action     = line["action"]
 	timeframe  = int(line["expiration"])
 
-	if recovery_value == None :
-		recovery_value = abs(lost_value)
-		
-	entry_value = get_entry_value(recovery_value, payout)
+	summary = get_summaries(line)
+	entry_value = get_entry_value(line, payout, value, recovery_value if gale else abs(summary["recovery"]))
 
 	wait_entry(entry_time)
-
 	status,id = API.buy(entry_value, par, action, timeframe)
 	
-	if(status):
-		
-		buy_gale(line, payout, entry_value, id, buy_binaria, gale)
-		
+	if(status):		
+		buy_gale(line, payout, entry_value, id, buy_binaria, gale)		
 		result = API.check_win_v3(id)
-		calculate_result(line, result, gale, entry_value, recovery_value)
+		update_results(line, result[1], recovery_value, gale)
+		retry_gale(line, payout, entry_value, buy_binaria)
 	else:
 		update_status(line, "Fail Bin")
 		buy_digital(line, payout)
 
 def buy_gale(line, payout, entry_value, id, option, gale):
 
-	par       = line["_id"]["par"]
+	par       = line["par"]
 	action    = line["action"]
 	timeframe = int(line["expiration"])
 
@@ -155,7 +145,17 @@ def buy_gale(line, payout, entry_value, id, option, gale):
 			job_thread = threading.Thread(target=option, args=[line, payout, entry_value, True])
 			job_thread.start()
 		else:
-			update_status(line, "Done")
+			update_status(line, "Gale")
+
+def retry_gale(line, payout, entry_value, option):
+
+	sig = get_signal(line)
+	if (sig["signal"]["status"] == "Gale" 
+		or sig["signal"]["status"] == "Fail Dig" 
+		or sig["signal"]["status"] == "Fail Bin"):
+		update_status(line, "Processing")
+		job_thread = threading.Thread(target=option, args=[line, payout, entry_value, True])
+		job_thread.start()
 
 def check_gale(id, par, timeframe, action):
 
@@ -180,25 +180,3 @@ def check_win_current(id, par, timeframe, action):
 		result = "WIN"
 
 	return result
-
-def calculate_result(line, result, gale, entry_value, recovery_value):
-
-	global lost_value
-
-	result     = round(result, 2)
-	time       = line["_id"]["time"]
-	par        = line["_id"]["par"]
-	action     = line["action"]
-	timeframe  = int(line["expiration"])
-
-	if result > 0:
-		log.info(f"{time} - {par} - {action} - {timeframe} - WIN: {result}")
-		if recovery_value > 0 and (not gale and abs(lost_value) >= recovery_value):
-			lost_value = lost_value + recovery_value
-	else:
-		if gale:
-			log.info(f"{time} - {par} - {action} - {timeframe} - LOSS: {result - recovery_value}")
-			lost_value = round(lost_value - entry_value - recovery_value, 2)
-
-	update_results(line, result, gale)
-	

@@ -4,7 +4,7 @@ var mongoose = restful.mongoose;
 
 // Schema
 var channel = new mongoose.Schema({
-	name: String,
+	name  : String,
 	active: Boolean
 });
 

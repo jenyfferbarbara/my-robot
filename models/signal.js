@@ -4,13 +4,13 @@ var mongoose = restful.mongoose;
 
 // Schema
 var signal = new mongoose.Schema({
-	user: String,
-	date: String,
-	channel: String,
+	user	  : String,
+	date	  : String,
+	channel	  : String,
 	expiration: Number,
 	signal: {
-		par: String,
-		time: String,
+		par   : String,
+		time  : String,
 		action: String,
 		status: String
 	}	
