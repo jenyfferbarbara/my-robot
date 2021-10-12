@@ -7,7 +7,7 @@ import os
 
 log = configure_logs(__file__)
 
-with open(os.getcwd() + '/config.json') as config_file:
+with open(os.getcwd() + "/config.json") as config_file:
 	data = json.load(config_file)
 
 client   = pymongo.MongoClient(f"mongodb://myRobot:6eJ%402chTyxn2%2as@{data['host']}:27017/")
@@ -31,48 +31,17 @@ def get_signals(status = "Pending"):
 
 	return collection.find(criteria)
 
-def update_results(doc, result, recovery_value, gale):	
+def get_signals_to_cancel(doc):
 
-	summary = get_summaries(doc)
-	result  = round(result, 2)
-	profit  = round(result + summary["profit"], 2)
+	user   	   = sys.argv[1]
+	collection = database["signals"]		
+	query	   = { 	"user"	 	    : user,
+					"date"		    : doc["date"],
+					"channel"	    : doc["channel"],
+					"expiration"	: doc["expiration"],
+					"signal.status" : "Pending" }
 
-	if result > 0:
-		new_values_sig = { "$set": { "result.status": 'Win', 
-									 "result.gain"  : result,
-									 "signal.status": 'Done'} }
-
-		new_values_sum = { "$set": { "profit": profit, 
-									 "recovery": 0,
-									 "win"   : summary["win"] + 1} }
-
-		log.info(f"WIN: {result}")
-	else:
-		if gale:
-			new_values_sig = { "$set": { "result.status": 'Loss', 
-										 "result.gale"  : result,
-										 "signal.status": 'Done'} }
-
-			new_values_sum = { "$set": { "profit" : profit, 
-									 	 "loss"   : summary["loss"] + 1,
-									 	 "recovery": round(result - recovery_value + summary["recovery"], 2)} }
-
-			log.info(f"LOSS: {result}")
-		else:			
-			new_values_sig = { "$set": { "result.status": 'Loss', 
-										 "result.gain"  : result} }
-
-			new_values_sum = { "$set": { "profit": profit } }
-
-			log.info(f"GALE: {result}")
-			
-	update_signals(doc, new_values_sig)
-	update_summaries(summary, new_values_sum)
-
-def update_status(doc, new_status):
-
-	new_values = { "$set": { "signal.status": new_status } }
-	update_signals(doc, new_values)
+	return collection.find(query)
 
 def get_signal(doc):
 
@@ -89,6 +58,66 @@ def get_signal(doc):
 	result = collection.find(query)
 	return result[0]
 
+def update_results(doc, result, recovery_value, gale):	
+
+	summary = get_summaries(doc)
+	result  = round(result, 2)
+	profit  = round(result + summary["profit"], 2)
+
+	if result > 0:
+		new_values_sig = { "$set": build_new_values_sig("Win", "Done", result, None) }
+		new_values_sum = { "$set": build_new_values_sum(profit, 0, summary["win"] + 1, None) }
+		log.info(f"WIN: {result}")
+	else:
+		if gale:
+			new_values_sig = { "$set": build_new_values_sig("Loss", "Done", None, result) }
+			new_values_sum = { "$set": build_new_values_sum(profit, round(result - recovery_value + summary["recovery"], 2), None, summary["loss"] + 1) }
+			log.info(f"LOSS: {result}")
+		else:			
+			new_values_sig = { "$set": build_new_values_sig("Loss", None, result, None) }
+			new_values_sum = { "$set": build_new_values_sum(profit, None, None, None) }
+			log.info(f"GALE: {result}")
+			
+	update_signals(doc, new_values_sig)
+	update_summaries(summary, new_values_sum)
+	check_stop(doc)
+
+def build_new_values_sig(res_status, sig_status, res_gain, res_gale):
+
+	new_values_sig = {}
+	new_values_sig["result.status"] = res_status
+
+	if res_gain:
+		new_values_sig["result.gain"] = res_gain
+	else:
+		new_values_sig["result.gale"] = res_gale
+
+	if sig_status:
+		new_values_sig["signal.status"] = sig_status
+	
+	return new_values_sig
+
+def build_new_values_sum(profit, recovery, win, loss):
+
+	new_values_sum = {}
+	new_values_sum["profit"] = profit
+
+	if recovery:
+		new_values_sum["recovery"] = recovery
+	
+	if win:
+		new_values_sum["win"] = win
+
+	if loss:
+		new_values_sum["loss"] = loss
+	
+	return new_values_sum
+
+def update_status(doc, new_status):
+
+	new_values = { "$set": { "signal.status": new_status } }
+	update_signals(doc, new_values)
+
 def update_signals(doc, new_values):
 	
 	collection = database["signals"]
@@ -101,7 +130,7 @@ def get_summaries(doc):
 	user   	   = sys.argv[1]
 	collection = database["summaries"]
 
-	query  = { "user"	 	    : user,
+	query  = {  "user"	 	    : user,
 				"date"		    : doc["date"],
 				"channel"	    : doc["channel"],
 				"expiration"	: doc["expiration"]}
@@ -125,39 +154,16 @@ def count_by_status(status = "Processing"):
 
 	return collection.count_documents(criteria)
 
-def check_signals_by_status(status):
-	
-	retorno = False
+def check_stop(doc):
 
-	list_signals = get_signals(status)
-	for line in list_signals:
-		retorno = True
-		break
+	summary = get_summaries(doc)
 
-	return retorno
+	if summary["profit"] >= summary["stop_win"] or summary["profit"] <= summary["stop_loss"]:
+		status = "WIN" if summary["profit"] >= summary["stop_win"] else "LOSS"
+		log.info(f"STOP {status} - Profit: {profit}, stop_win: {stop_win}, stop_loss: {stop_loss}")
+		cancel_signals(get_signals_to_cancel(doc))
 
-def check_stop():
+def cancel_signals(list_signals):
 
-	if check_signals_by_status("Processing"):
-		return False
-	else:
-		pending = check_signals_by_status("Pending")
-		
-		profit = 0
-		list_signals = get_signals("TESTE")
-		profit = sum(line["profit"] for line in list_signals)
-		
-		stop_win  = int(sys.argv[3])
-		stop_loss = int(sys.argv[4])
-
-		if profit >= stop_win or abs(profit) >= stop_loss or not pending:
-			log.info(f"STOP - pending: {pending}, profit: {profit}, stop_win: {stop_win}, stop_loss: {stop_loss}")
-			return True
-		else:
-			return False
-
-def cancel_signals():
-
-	list_signals = get_signals()
 	for line in list_signals:
 		update_status(line, "Canceled")

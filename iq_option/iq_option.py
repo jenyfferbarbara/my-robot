@@ -85,6 +85,7 @@ def buy(line):
 				buy_digital(line, payout)
 		else:
 			update_status(line, "Closed")
+			log.info("Closed Pair")
 
 def buy_digital(line, payout, recovery_value = None, gale = False):
 
@@ -94,7 +95,7 @@ def buy_digital(line, payout, recovery_value = None, gale = False):
 	timeframe  = int(line["expiration"])
 
 	summary = get_summaries(line)
-	entry_value = get_entry_value(line, payout, value, recovery_value if gale else abs(summary["recovery"]))
+	entry_value = get_entry_value(payout, value, recovery_value if gale else abs(summary["recovery"]))
 	
 	wait_entry(entry_time)
 	buys_status, id = API.buy_digital_spot_v2(par, entry_value, action, timeframe)
@@ -120,7 +121,7 @@ def buy_binaria(line, payout, recovery_value = None, gale = False):
 	timeframe  = int(line["expiration"])
 
 	summary = get_summaries(line)
-	entry_value = get_entry_value(line, payout, value, recovery_value if gale else abs(summary["recovery"]))
+	entry_value = get_entry_value(payout, value, recovery_value if gale else abs(summary["recovery"]))
 
 	wait_entry(entry_time)
 	status,id = API.buy(entry_value, par, action, timeframe)

@@ -28,7 +28,7 @@ angular.module('angularApp', [])
 		$scope.channels.forEach(channel => {
 			if($scope.application.users && channel.list){
 				$scope.application.users.forEach(user => {
-					var date = $filter('date')(channel.date, "yyyy-MM-dd");
+					var date    = $filter('date')(channel.date, "yyyy-MM-dd");
 					var entries = channel.list.split("\n");
 					entries.forEach(entry => {
 						entry = entry.split(";")
@@ -55,13 +55,23 @@ angular.module('angularApp', [])
 						});
 					});
 
+					value     = user.value
+					payout    = 0.87
+					recovery  = 0
+					profit 	  = value * payout
+					stop_loss = 0
+					for(var i = 0; i < channel.stop_loss * 2; i++){
+						recovery = (profit + recovery) / payout
+						stop_loss = stop_loss + recovery
+					}
+
 					var data = {
 						"user"		: user.name,
 						"date"		: date,
 						"channel"	: channel.name,
 						"expiration": channel.timeframe,
-						"stop_win"  : channel.stop_win * user.value,
-						"stop_loss" : channel.stop_loss * user.value,
+						"stop_win"  : (channel.stop_win * profit).toFixed(),
+						"stop_loss" : stop_loss.toFixed(),
 						"profit"	: 0,
 						"recovery"	: 0,
 						"win"		: 0,

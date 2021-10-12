@@ -55,7 +55,7 @@ def get_time_close(timeframe):
 
 	return datetime.fromtimestamp(exp).strftime("%H:%M")
 	
-def get_entry_value(line, payout, value, lost_value):
+def get_entry_value(payout, value, lost_value):
 
 	if(lost_value > 0):
 		return get_gale_value(value, lost_value, payout)
@@ -65,11 +65,6 @@ def get_entry_value(line, payout, value, lost_value):
 def get_gale_value(value, recovery, payout):
 
 	payout = payout/100	
-	profit = round(value * payout, 2)
+	profit = round(value * payout, 2) + recovery
 	
-	while True:
-		if round(value * payout, 2) >= round(abs(recovery) + profit, 2):
-			break
-		value += 0.01
-
-	return round(value, 2)
+	return round(profit / payout, 2)

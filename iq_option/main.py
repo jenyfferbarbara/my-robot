@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from logger_config import configure_logs
 from iq_option import login, change_balance, buy_new_thread
 from utils import get_schedule_time
-from mongo import get_signals, check_stop, cancel_signals, update_status, count_by_status
+from mongo import get_signal, get_signals, update_status, count_by_status
 import sys
 import time
 import schedule
@@ -43,7 +43,11 @@ while len(keyMap) > 0:
 			update_status(entry, "Canceled")
 			log.info("Canceled because there is already another transaction in progress")
 		else:
-			buy_new_thread(entry)
+			sig = get_signal(line)
+			if sig["signal"]["status"] == "Pending"
+				buy_new_thread(entry)
+			else:
+				log.info("Buy not made because the signal does not have Pending status")	
 		keyMap.pop(entry_time, None)
 
 	time.sleep(1)
