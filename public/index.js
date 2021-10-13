@@ -71,7 +71,7 @@ angular.module('angularApp', [])
 						"channel"	: channel.name,
 						"expiration": channel.timeframe,
 						"stop_win"  : (channel.stop_win * profit).toFixed(),
-						"stop_loss" : stop_loss.toFixed(),
+						"stop_loss" : stop_loss.toFixed() * -1,
 						"profit"	: 0,
 						"recovery"	: 0,
 						"win"		: 0,
@@ -110,7 +110,7 @@ angular.module('angularApp', [])
 	
 	$scope.application = {
 		users: []
-	  }
+	}
 
 	$scope.postdata_old = function () {
 		$http.get('/run_robot?user=' + this.account + '&wallet=' + this.wallet 
