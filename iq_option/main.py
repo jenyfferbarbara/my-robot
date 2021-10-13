@@ -43,8 +43,8 @@ while len(keyMap) > 0:
 			update_status(entry, "Canceled")
 			log.info("Canceled because there is already another transaction in progress")
 		else:
-			sig = get_signal(line)
-			if sig["signal"]["status"] == "Pending"
+			sig = get_signal(entry)
+			if sig["signal"]["status"] == "Pending":
 				buy_new_thread(entry)
 			else:
 				log.info("Buy not made because the signal does not have Pending status")	

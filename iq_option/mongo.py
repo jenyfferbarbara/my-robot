@@ -157,9 +157,12 @@ def count_by_status(status = "Processing"):
 def check_stop(doc):
 
 	summary = get_summaries(doc)
+	profit = summary["profit"]
+	stop_win = summary["stop_win"]
+	stop_loss = summary["stop_loss"]
 
-	if summary["profit"] >= summary["stop_win"] or summary["profit"] <= summary["stop_loss"]:
-		status = "WIN" if summary["profit"] >= summary["stop_win"] else "LOSS"
+	if  profit >=  stop_win or profit <= stop_loss:
+		status = "WIN" if profit >= stop_win else "LOSS"
 		log.info(f"STOP {status} - Profit: {profit}, stop_win: {stop_win}, stop_loss: {stop_loss}")
 		cancel_signals(get_signals_to_cancel(doc))
 
