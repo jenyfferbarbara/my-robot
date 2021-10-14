@@ -28,7 +28,7 @@ angular.module('angularApp', [])
 				"wallet"   : user.wallet,
 				"value"    : user.value,
 				"stop_win" : user.stop_win,
-				"stop_loss": user.stop_loss
+				"stop_loss": user.stop_loss * -1
 			}
 			
 			$http.put('/api/settings/' + user._id, JSON.stringify(data)).then(function (response) {

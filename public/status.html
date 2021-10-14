@@ -83,6 +83,7 @@
 											<th>Result    </th>
 											<th>1ª Entry  </th>
 											<th>2ª Entry  </th>
+											<th>Actions   </th>
 										</tr>
 									</thead>
 									<tbody>					
@@ -95,6 +96,10 @@
 											<td>{{ sig.result.status }}</td>
 											<td>{{ sig.result.gain   }}</td>
 											<td>{{ sig.result.gale   }}</td>
+											<td><button type="button" class="btn btn-secondary btn-sm" ng-click="cancel(sig)">
+													Cancel
+												</button>
+											</td>
 										</tr>
 									</tbody>
 								</table>

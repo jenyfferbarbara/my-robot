@@ -24,8 +24,9 @@ def configure_logs(full_file_path, output_level=logging.INFO):
 		ch.setLevel(output_level)
 		ch.setFormatter(formatter)
 
-		date         = datetime.now().strftime('%Y-%m-%d')
-		file_name    = f"logs/{date}.log"
+		user		 = sys.argv[1]
+		date		 = datetime.now().strftime('%Y-%m-%d')
+		file_name	 = f"logs/{date}-{user}.log"
 		file_handler = logging.FileHandler(file_name)
 		file_handler.setLevel(output_level)
 		file_handler.setFormatter(formatter)

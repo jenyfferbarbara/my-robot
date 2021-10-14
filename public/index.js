@@ -8,6 +8,10 @@ angular.module('angularApp', [])
 		{ name: '05', id: '5' },
 		{ name: '15', id: '15'}];
 
+	$scope.application = {
+		users: []
+	}
+
 	get_users_settings();
 	get_channels();
 
@@ -44,6 +48,7 @@ angular.module('angularApp', [])
 								"status"    : today < date || (today == date && now < entry[1]) ? 'Pending' : 'Delayed'
 							}			
 						}
+						
 						$http.post('/api/signals' , JSON.stringify(data)).then(function (response) {
 							if (response.data)
 								$scope.msg = "Post Signals Data Submitted Successfully!";
@@ -90,6 +95,18 @@ angular.module('angularApp', [])
 				});				
 			}
 		});
+
+		$scope.application.users.forEach(user => {
+			$http.get('/run_robot?user=' + user.name).then(function (response) {
+			if (response.data)
+					$scope.msg = "Run robot Successfully!";
+				}, function (response) {
+					$scope.msg = "Service not Exists";
+					$scope.statusval = response.status;
+					$scope.statustext = response.statusText;
+					$scope.headers = response.headers();
+			});
+		});
 	}
 
 	function get_users_settings() {
@@ -107,22 +124,4 @@ angular.module('angularApp', [])
 			});
 		});
 	}
-	
-	$scope.application = {
-		users: []
-	}
-
-	$scope.postdata_old = function () {
-		$http.get('/run_robot?user=' + this.account + '&wallet=' + this.wallet 
-		+ '&stop_win=' + this.stop_win + '&stop_loss=' + this.stop_loss + '&expiration=' + this.expiration 
-		+ '&channel=' + this.channel).then(function (response) {
-			if (response.data)
-					$scope.msg = "Run robot Successfully!";
-				}, function (response) {
-					$scope.msg = "Service not Exists";
-					$scope.statusval = response.status;
-					$scope.statustext = response.statusText;
-					$scope.headers = response.headers();
-		});
-	};
 })
