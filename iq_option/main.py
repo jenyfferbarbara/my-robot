@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 from logger_config import configure_logs
 from iq_option import login, change_balance, buy_new_thread, get_stop_win, get_stop_loss
-from utils import get_schedule_time
 from mongo import get_signal, get_signals, update_status, count_by_status, get_summaries, cancel_signals
 import sys
 import time
@@ -36,7 +35,7 @@ stop = False
 
 while len(keyMap) > 0 and stop == False:
 
-	entry_time = datetime.now() + timedelta(seconds=15)
+	entry_time = datetime.now() + timedelta(seconds=30)
 	date       = entry_time.strftime('%Y-%m-%d')
 	entry_time = entry_time.strftime('%H:%M:%S')	
 	

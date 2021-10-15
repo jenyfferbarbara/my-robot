@@ -1,13 +1,9 @@
 from datetime import datetime, timedelta
 import time
 
-def get_schedule_time(entry_time):
-
-	return calculate_time(entry_time, 15)
-
 def get_entry_time(entry_time):
 	
-	return calculate_time(entry_time, 5)
+	return calculate_time(entry_time, 10)
 
 def check_entry_time(entry_time):
 	
