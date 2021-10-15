@@ -95,6 +95,18 @@ angular.module('angularApp', [])
 				});				
 			}
 		});
+
+		$scope.application.users.forEach(user => {
+			$http.get('/run_robot?user=' + user.name).then(function (response) {
+			if (response.data)
+					$scope.msg = "Run robot Successfully!";
+				}, function (response) {
+					$scope.msg = "Service not Exists";
+					$scope.statusval = response.status;
+					$scope.statustext = response.statusText;
+					$scope.headers = response.headers();
+			});
+		});
 	}
 
 	function get_users_settings() {
