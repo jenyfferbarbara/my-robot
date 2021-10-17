@@ -3,7 +3,7 @@ import time
 
 def get_entry_time(entry_time):
 	
-	return calculate_time(entry_time, 10)
+	return calculate_time(entry_time, 3)
 
 def check_entry_time(entry_time):
 	
@@ -28,11 +28,12 @@ def calculate_time(entry, sec):
 
 	return date.strftime('%H:%M:%S')
 
-def get_check_time(timeframe):
+def get_check_time(timeframe, entry_time):
 
-	time = get_time_close(timeframe).split(":")
+	sec  = (60 * timeframe) - 3
+	time = entry_time.split(":")
 	date = datetime(2021, 1, 1, int(time[0]), int(time[1]))
-	date = date - timedelta (seconds=3)
+	date = date + timedelta(seconds=sec)
 
 	return date.strftime('%H:%M:%S')
 

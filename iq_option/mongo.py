@@ -88,7 +88,7 @@ def update_results(doc, result, recovery_value, gale):
 		new_values_sum = { "$set": 
 			build_new_values_sum(
 				profit, 
-				0, 
+				None if gale else 0, 
 				summary["win"] + 1, 
 				None) }
 		log.info(f"WIN: {result}")
@@ -110,18 +110,19 @@ def update_results(doc, result, recovery_value, gale):
 	update_signals(doc, new_values_sig)
 	update_summaries(summary, new_values_sum)
 	check_stop(doc)
+	sys.exit
 
 def build_new_values_sig(res_status, sig_status, res_gain, res_gale):
 
 	new_values_sig = {}
 	new_values_sig["result.status"] = res_status
 
-	if res_gain:
+	if res_gain != None:
 		new_values_sig["result.gain"] = res_gain
 	else:
 		new_values_sig["result.gale"] = res_gale
 
-	if sig_status:
+	if sig_status != None:
 		new_values_sig["signal.status"] = sig_status
 	
 	return new_values_sig
@@ -131,13 +132,13 @@ def build_new_values_sum(profit, recovery, win, loss):
 	new_values_sum = {}
 	new_values_sum["profit"] = profit
 
-	if recovery:
+	if recovery != None:
 		new_values_sum["recovery"] = recovery
 	
-	if win:
+	if win != None:
 		new_values_sum["win"] = win
 
-	if loss:
+	if loss != None:
 		new_values_sum["loss"] = loss
 	
 	return new_values_sum
@@ -184,12 +185,15 @@ def update_summaries(doc, new_values):
 	criteria   = {"_id": doc["_id"]}
 	collection.update_one(criteria, new_values)
 
-def count_by_status(status = "Processing"):
+def count_by_status(doc, status = "Processing"):
 
 	user       = sys.argv[1]
 	collection = database["signals"]
-	criteria   = { "user"   	   : user, 
-				   "signal.status" : status }
+	criteria   = { "user"   	    : user,
+					"date"		    : doc["date"],
+					"channel"	    : doc["channel"],
+					"expiration"    : doc["expiration"],
+				    "signal.status" : status }
 
 	return collection.count_documents(criteria)
 
